@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: devflow-ai
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+
+logging:
+  structured:
+    format:
+      console: logstash
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+devflow:
+  scheduling:
+    max-concurrent-jobs: 25
+    max-concurrent-per-tenant: 5
+    fairness-window-seconds: 300
+  worker:
+    claim-batch-size: ${DEVFLOW_WORKER_CLAIM_BATCH_SIZE:25}

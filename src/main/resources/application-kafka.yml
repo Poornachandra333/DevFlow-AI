@@ -1,0 +1,38 @@
+spring:
+  kafka:
+    bootstrap-servers: ${DEVFLOW_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        spring.json.add.type.headers: false
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: ${DEVFLOW_KAFKA_CONSUMER_GROUP:devflow-workers}
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.value.default.type: com.devflowai.event.JobEvent
+        spring.json.trusted.packages: com.devflowai.event
+        spring.json.use.type.headers: false
+    listener:
+      ack-mode: record
+
+devflow:
+  kafka:
+    job-events-topic: ${DEVFLOW_KAFKA_JOB_EVENTS_TOPIC:devflow.job-events.v1}
+    publish-timeout-seconds: 10
+    retry:
+      initial-interval-ms: 1000
+      max-elapsed-time-ms: 30000
+  outbox:
+    poll-interval-ms: 1000
+  worker:
+    concurrency: ${DEVFLOW_WORKER_CONCURRENCY:1}
+    lease-duration-seconds: 60
+    lease-heartbeat-ms: 20000
+    recovery-interval-ms: 5000
